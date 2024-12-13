@@ -7,6 +7,9 @@
 #let Re = "Re"
 #let Nu = "Nu"
 #let Pr = "Pr"
+#let dt = "dt"
+#let dx = "dx"
+#let dy = "dy"
 
 = Definitions
 / Adiabatic Process: A process in which no heat transfer occurs
@@ -26,9 +29,18 @@
 - 1D Conduction: When conduction is significant in only a single direction
 - $tau = 0$: material is opaque or thick (>1 wavelength of light)
 
+= Constants
+=== Boltzmann Constant
+$ k_B = 1.38 times 10^(-23) J/K $
+
+=== Stefan-Boltzmann Constant
+$ sigma_"SB" = 5.67 times 10^(-8) frac(W, m^2 K^4) $
+
 = Governing Equation
 
 $ E_"in" - E_"out" + E_"gen" = E_"st" $
+
+#pagebreak()
 
 /*
 
@@ -36,6 +48,9 @@ CONDUCTION
 
 */
 = Conduction
+=== Fourier Law of Heat Conduction
+$ q^'' = -k frac(partial T, partial x) $
+
 === Heat Diffusion Equation
 Cartesian Coordinates:
 $ frac(partial, partial x) (k frac(partial T, partial x)) + frac(partial, partial y) (k frac(partial T, partial y)) + frac(partial, partial z) (k frac(partial T, partial z)) + dot(q)^''' = rho c_p frac(partial T, partial t) $
@@ -99,8 +114,16 @@ $ epsilon_f = (frac(k P, h A_c))^(1/2) $
 Fin Efficiency:
 $ eta_f = frac(tanh(m L), m L) $
 
-Resistance:
+Total Surface Efficiency:
+$ eta_t = 1 - A_f/A (1 - eta_f) $
+
+Resistance of a Fin:
+The resistance for a single fin
 $ R_(t,f) = frac(1, h A_f eta_f) $
+
+Thermal Resistance of Finned Surface:
+The resistance for an entire finned surface
+$ R = frac(1, h A eta_t) $
 
 == Transient Conduction
 === Biot Number
@@ -125,6 +148,8 @@ $ theta / theta_i = frac(T - T_infinity, T_i - T_infinity) = exp(-Bi dot Fo) $
 + Calculate Fourier Number. If 0.05 < Fo < 0.2 then Eqn 3.72 and 3.73 (pg. 205)
 + Calculate Fourier Number. If Fo > 0.2 then Eqn 3.75 - 3.77 (pg. 206)
 
+#pagebreak()
+
 /*
 
 CONVECTION
@@ -132,6 +157,12 @@ CONVECTION
 */
 
 = Convection
+$ q_"local" = h A(T_s - T_infinity) $
+$ q_"global" = U A (T_s - T_infinity) $
+
+=== Thermal Resistance
+$ R = frac(1, h A) $
+
 === Reynold's Number
 $ Re_x = frac(rho u_infinity x, mu) = frac(u_infinity x, nu) $
 
@@ -145,8 +176,9 @@ $ Nu = 0.664 Re_L^(1/2) Pr^(1/3) $
 $ Pr equiv nu / k $
 
 === Convective Heat Transfer Coefficient
-$ h = -frac(k, T_w - T_infinity) frac(partial T, partial y) |_(y=0) $
+$ h = -frac(k_f, T_s - T_infinity) frac(partial T, partial y) |_(y=0) $
 
+#pagebreak()
 
 /*
 
@@ -219,10 +251,156 @@ Total Heat Flux between two diffuse, gray surfaces:
 $ Q_"net"_(1-2) = frac(sigma_"SB" (T_1^4 - T_2^4), R_"surf"_1 + R_"geo"_(1-2) + R_"surf"_2) $
 
 = Heat Pipes
+Saturated liquids evaporate by absorbing heat from a higher temperature and saturated vapors condense by releasing heat to a lower temperature.
+
+$ Delta P_"capillary" - Delta P_"gravitational" = Delta P_L + Delta P_V  $
+
+=== Effective Length of a Heat Pipe
+$ L_"eff" = L_A + 1/2 (L_E + L_C) $
+
+=== Capillary Pressure
+Pore Radius ($r_p$)
+Surface Tension ($gamma$)
+
+$ Delta P_"capillary" = 2 gamma [ cos(theta_E)/ r_p - cos(theta_C) / r_p ] $
+
+=== Gravitational Pressures
+Angle of Heat Pipe ($phi.alt$)
+
+$ Delta P_"gravitational" = rho g (L_"eff" sin(phi.alt)) $
+
+=== Darcy Relation
+Flow Rate ($Q_f$)
+Permeability ($Kappa_p$)
+Effective Wick Area ($A_w$)
+
+$ Q_f = - Kappa_p / mu A_w [frac(Delta P_L, L_"eff")] $
+
+=== Liquid Phase Change Pressure Drop
+$ Delta P_L = frac(mu L_"eff", Kappa_p A_w) (dot(m), rho_L) $
+
+=== Vapor Related Pressure Drop
+$ Delta P_V = (1/2 rho_v v^2) (64 / Re) [frac(L_"eff", 4 A_w / rho)] $
+
+=== Heat Pipe Equation
+$ q dot L_"eff" = (frac(rho_L gamma h_"fg", mu_L)) [Kappa_p A_w] [2 / r_p] $
+
+=== Weber Number
+$ "We" = frac(rho v^2, gamma) l $
+
+=== Issues with Heat Pipes
++ Sonic limit (liquid metal heat pipes)
++ Entrainment -> dry out
++ Boiling limitation (bubbles in wick) 
++ Chokig of vapor flux
+
+#pagebreak()
+
+/*
+
+HEAT EXCHANGERS
+
+*/
+= Heat Exchangers
+$ CC_h = dot(m)_h C_h $
+$ CC_c = dot(m)_c C_c $
+
+=== Power Lost
+$ d q = - dot(m)_h C_h d T_h $
+
+=== Power Gained
+$ d q = dot(m)_c C_c d T_c $
+
+=== Log-Mean Temperature Difference
+$ Delta T_"LMTD" = frac( Delta T_2 - Delta T_1, ln(frac(Delta T_2, Delta T_1)) ) $
+
+=== Heat Flux
+$ ln(frac(Delta T_2, Delta T_1)) = - U A [ frac(1, dot(m)_c C_c) + frac(1, dot(m)_h C_h) ] $
+
+$ q = U A Delta T_"LMTD" $
+
+=== Max Heat Flux
+$ q_"max" = CC_"min" (T_"hi" - T_"ci") $
+
+=== Heat Exchanger Effectiveness
+$ epsilon = q / q_"max" $
+
+=== Number of Transfer Units
+$ "NTU" = frac(U A, CC_min) $
+
+== Parallel Flow
+$ Delta T_1 = T_"hi" - T_"ci" $
+$ Delta T_2 = T_"ho" - T_"co" $
+
+
+== Counter Flow
+$ Delta T_1 = T_"hi" - T_"co" $
+$ Delta T_2 = T_"ho" - T_"ci" $
+
+#pagebreak()
+
+/*
+
+THERMAL ELECTRICS
+
+*/
+= Thermal Electrics
+$ m = R/RR $
+$ Z = frac(S^2, K RR) $
+
+=== Seebeck Effect
+$ S = frac(Delta V, Delta T) $
+
+== Heat Engine
+
+=== Carnot Efficiency
+$ eta_"carnot" = frac(T_H - T_C, T_H) $
+
+=== Carzon-Ahlborn Efficiency
+$ eta_(c - a) = 1 - sqrt(T_C / T_H) $
+
+=== Thermal Conductance
+$ K = frac(k_1 A_1, l_1) + frac(k_2 A_2, l_2) $
+
+=== Resistance of Materials
+$ RR = frac(rho_1 l_1, A_1) + frac(rho_2 l_2, A_2) $
+
+=== Current
+$ I = frac(S(T_H - T_C), R + RR) $
+
+=== Thermal Electric Efficiency
+$ eta_"TE" = eta_"carnot" [frac( (m / (m+1) ), 1 + (K RR)/S^2 ((m+1) / T_H) - 1/2 eta_"carnot" (1 / (m+1)) )] $
+
+=== Geometric Constraint
+$ sqrt(frac(k_2 rho_1, k_1 rho_2)) = A_1 / A_2 $
+
+=== Optimal m
+$ m_"optimal" = sqrt(1 + 1/2 Z (T_H + T_C)) $
+
+== Peltier Cooler
+$ q_Pi = q_o + q_T = Pi I $
+$ q_T = 1/2 I^2 RR + K (T_H - T_C) $
+
+=== Coefficient of Perfomance
+$ "COP" = frac(T_C , T_H - T_C) $
+
+=== Peltier Coefficient
+$ Pi = S T_C $
+
+=== Critical Current
+$ I_C = frac(S T_C, RR) $
+
+#pagebreak()
+
+/*
+
+GENERAL EQUATIONS
+
+*/
+= General Equations of Usefulness
 
 $ L_c = V / A_s $
 
-= General Equations of Usefulness
 === Hyperbolic Functions
 $ sinh x = frac(e^x - e^(-x), 2) $
 $ cosh x = frac(e^x + e^(-x), 2) $
@@ -243,5 +421,44 @@ $ V = pi r^2 h $
 === Error Function
 $ erf(eta) = (2/pi^(1/2)) integral_0^eta e^(-u^2) d u $
 
-Complimentary Error Function:
+=== Complimentary Error Function:
 $ erfc(eta) = 1 - erf(eta) $
+
+=== Mass Flow Rate
+$ dot(m) = Q_f dot rho_f $
+
+#pagebreak()
+
+/*
+
+Differential Equations
+
+*/
+= Differential Equations
+=== First Order ODE
+$ frac(partial f, partial t) + p(t) f(t) = g(t) $
+
+1. Find $mu(t)$
+$ mu(t) = exp(integral p(t) d t) $
+
+2. Multiply by $mu(t)$
+$ frac(d, d t) (mu(t) f(t)) = mu(t) g(t) $
+
+3. Integrate Both Sides
+$ integral frac(d, dt) (mu(t) f(t)) dt = integral mu(t) g(t) dt $
+$ mu(t) f(t) = integral mu(t) g(t) dt $
+$ f(t) = 1 / mu(t) integral mu(t) g(t) dt $
+
+=== Second Order ODE
+$ frac(partial^2 y(t), partial t^2) + p(t) frac(partial y(t), partial t) + q(t) y(t) = g(t) $
+
+1. Find the two roots (assume $y = exp(r t)$)
+$ frac(partial y(t), partial t) = r exp(r t) $
+$ frac(partial^2 y(t), partial t^2) = r^2 exp(r t) $
+
+$ r_1, r_2 = frac( -p(t) plus.minus sqrt( p(t)^2 - 4 dot q(t) ), 2 ) $
+
+2. Subsitute roots into general solution
+$ y(t) = c_1 exp(r_1 t) + c_2 exp(r_2 t) $
+
+3. Use Initial Conditions to find $c_1$ and $c_2$
